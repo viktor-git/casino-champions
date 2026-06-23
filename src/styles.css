@@ -63,25 +63,36 @@
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.129 0.042 264.695);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.129 0.042 264.695);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.129 0.042 264.695);
-  --primary: oklch(0.208 0.042 265.755);
-  --primary-foreground: oklch(0.984 0.003 247.858);
-  --secondary: oklch(0.968 0.007 247.896);
-  --secondary-foreground: oklch(0.208 0.042 265.755);
-  --muted: oklch(0.968 0.007 247.896);
-  --muted-foreground: oklch(0.554 0.046 257.417);
-  --accent: oklch(0.968 0.007 247.896);
-  --accent-foreground: oklch(0.208 0.042 265.755);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.984 0.003 247.858);
-  --border: oklch(0.929 0.013 255.508);
-  --input: oklch(0.929 0.013 255.508);
-  --ring: oklch(0.704 0.04 256.788);
+  /* Casino dark luxury palette */
+  --background: oklch(0.16 0.03 300);
+  --foreground: oklch(0.97 0.02 90);
+  --card: oklch(0.21 0.04 300);
+  --card-foreground: oklch(0.97 0.02 90);
+  --popover: oklch(0.21 0.04 300);
+  --popover-foreground: oklch(0.97 0.02 90);
+  --primary: oklch(0.82 0.17 85); /* neon gold */
+  --primary-foreground: oklch(0.16 0.03 300);
+  --secondary: oklch(0.55 0.24 25); /* casino red */
+  --secondary-foreground: oklch(0.98 0.01 90);
+  --muted: oklch(0.25 0.04 300);
+  --muted-foreground: oklch(0.78 0.04 90);
+  --accent: oklch(0.55 0.22 310); /* neon purple */
+  --accent-foreground: oklch(0.98 0.01 90);
+  --destructive: oklch(0.6 0.25 27);
+  --destructive-foreground: oklch(0.98 0.01 90);
+  --border: oklch(0.32 0.05 300);
+  --input: oklch(0.32 0.05 300);
+  --ring: oklch(0.82 0.17 85);
+  --gold: oklch(0.82 0.17 85);
+  --gold-glow: oklch(0.9 0.18 90);
+  --neon-red: oklch(0.62 0.25 25);
+  --neon-purple: oklch(0.6 0.25 310);
+  --gradient-gold: linear-gradient(135deg, oklch(0.82 0.17 85), oklch(0.9 0.18 90));
+  --gradient-felt: radial-gradient(ellipse at top, oklch(0.22 0.06 300) 0%, oklch(0.13 0.03 300) 70%);
+  --shadow-neon-gold: 0 0 20px oklch(0.82 0.17 85 / 0.6), 0 0 40px oklch(0.82 0.17 85 / 0.3);
+  --shadow-neon-red: 0 0 20px oklch(0.62 0.25 25 / 0.6), 0 0 40px oklch(0.62 0.25 25 / 0.3);
+  --shadow-neon-purple: 0 0 20px oklch(0.6 0.25 310 / 0.6), 0 0 40px oklch(0.6 0.25 310 / 0.3);
+  --shadow-card: 0 10px 40px -10px oklch(0 0 0 / 0.7);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -138,7 +149,41 @@
   }
 
   body {
+    background: var(--gradient-felt);
     background-color: var(--color-background);
     color: var(--color-foreground);
+    font-family: ui-sans-serif, system-ui, sans-serif;
   }
+}
+
+@layer utilities {
+  .text-neon-gold {
+    color: var(--gold);
+    text-shadow: 0 0 10px oklch(0.82 0.17 85 / 0.8), 0 0 24px oklch(0.82 0.17 85 / 0.5);
+  }
+  .text-neon-red {
+    color: var(--neon-red);
+    text-shadow: 0 0 10px oklch(0.62 0.25 25 / 0.8), 0 0 24px oklch(0.62 0.25 25 / 0.5);
+  }
+  .text-neon-purple {
+    color: var(--neon-purple);
+    text-shadow: 0 0 10px oklch(0.6 0.25 310 / 0.8), 0 0 24px oklch(0.6 0.25 310 / 0.5);
+  }
+  .shadow-neon-gold { box-shadow: var(--shadow-neon-gold); }
+  .shadow-neon-red { box-shadow: var(--shadow-neon-red); }
+  .shadow-neon-purple { box-shadow: var(--shadow-neon-purple); }
+  .bg-gradient-gold { background: var(--gradient-gold); }
+  .border-gold { border-color: var(--gold); }
+
+  @keyframes neon-pulse {
+    0%, 100% { opacity: 1; filter: brightness(1); }
+    50% { opacity: 0.85; filter: brightness(1.15); }
+  }
+  .animate-neon-pulse { animation: neon-pulse 2.4s ease-in-out infinite; }
+
+  @keyframes slot-bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+  }
+  .animate-slot-bob { animation: slot-bob 3s ease-in-out infinite; }
 }
