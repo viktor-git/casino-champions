@@ -39,8 +39,39 @@ function Crown({ className = "" }: { className?: string }) {
   );
 }
 
+function Bulbs({ count = 14, className = "" }: { count?: number; className?: string }) {
+  return (
+    <div className={`flex justify-between gap-1 ${className}`} aria-hidden>
+      {Array.from({ length: count }).map((_, i) => (
+        <span
+          key={i}
+          className="h-2 w-2 rounded-full animate-marquee-blink"
+          style={{
+            background: "var(--gold)",
+            animationDelay: `${(i % 4) * 0.25}s`,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+function ChipIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 64 64" className={className} aria-hidden="true">
+      <circle cx="32" cy="32" r="30" fill="var(--neon-red)" stroke="var(--gold)" strokeWidth="3" />
+      <circle cx="32" cy="32" r="18" fill="none" stroke="var(--gold)" strokeWidth="2" strokeDasharray="4 4" />
+      <circle cx="32" cy="32" r="10" fill="var(--gold)" />
+      <text x="32" y="37" textAnchor="middle" fontSize="12" fontWeight="900" fill="var(--background)">
+        $
+      </text>
+    </svg>
+  );
+}
+
 function SlotCard({ employee, rank }: { employee: Employee; rank: number }) {
   const isTop = rank <= 3;
+  const reels = ["7", "7", "7"];
   return (
     <div
       className={[
@@ -50,6 +81,10 @@ function SlotCard({ employee, rank }: { employee: Employee; rank: number }) {
         rank === 1 ? "md:scale-105" : "",
       ].join(" ")}
     >
+      {/* Bulb frame */}
+      <Bulbs count={10} className="absolute top-2 left-4 right-4" />
+      <Bulbs count={10} className="absolute bottom-2 left-4 right-4" />
+
       {isTop && (
         <Crown className="absolute -top-5 left-1/2 h-10 w-10 -translate-x-1/2 text-neon-gold animate-neon-pulse" />
       )}
@@ -67,8 +102,20 @@ function SlotCard({ employee, rank }: { employee: Employee; rank: number }) {
 
       <h3 className="mb-3 text-lg font-bold text-foreground">{employee.name}</h3>
 
-      {/* Reel display */}
-      <div className="rounded-lg border border-border bg-background/60 px-3 py-4">
+      {/* Triple-7 reel display */}
+      <div className="mb-3 grid grid-cols-3 gap-1.5 rounded-md border border-border bg-background/80 p-2">
+        {reels.map((r, i) => (
+          <div
+            key={i}
+            className="flex h-10 items-center justify-center rounded bg-card font-serif text-2xl font-black text-neon-red"
+          >
+            {r}
+          </div>
+        ))}
+      </div>
+
+      {/* Revenue display */}
+      <div className="rounded-lg border border-border bg-background/60 px-3 py-3">
         <p className="mb-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
           Revenue Generated
         </p>
@@ -82,11 +129,12 @@ function SlotCard({ employee, rank }: { employee: Employee; rank: number }) {
         </p>
       </div>
 
-      {/* Slot lever dots */}
-      <div className="mt-4 flex justify-center gap-1.5">
-        <span className="h-2 w-2 rounded-full bg-neon-red shadow-neon-red" style={{ background: "var(--neon-red)" }} />
-        <span className="h-2 w-2 rounded-full" style={{ background: "var(--gold)" }} />
-        <span className="h-2 w-2 rounded-full" style={{ background: "var(--neon-purple)" }} />
+      {/* Suit row */}
+      <div className="mt-4 flex justify-center gap-3 text-base">
+        <span className="text-neon-red">♥</span>
+        <span style={{ color: "var(--gold)" }}>♦</span>
+        <span className="text-foreground">♠</span>
+        <span className="text-neon-purple">♣</span>
       </div>
     </div>
   );
@@ -136,11 +184,28 @@ function PodiumBlock({
 function Index() {
   const sorted = [...employees].sort((a, b) => b.revenue - a.revenue);
   const top3 = sorted.slice(0, 3);
+  const totalRevenue = sorted.reduce((s, e) => s + e.revenue, 0);
 
   return (
     <main className="min-h-screen">
+      {/* TOP MARQUEE TICKER */}
+      <div className="border-b border-gold/40 bg-background/80 py-2 overflow-hidden">
+        <div className="flex w-max gap-12 whitespace-nowrap animate-ticker text-xs font-bold uppercase tracking-[0.35em] text-neon-gold">
+          {Array.from({ length: 2 }).map((_, k) => (
+            <div key={k} className="flex gap-12">
+              <span>★ Jackpot Hits ★</span>
+              <span>♠ Big Wins ♠</span>
+              <span>♦ 24/7 Open ♦</span>
+              <span>♥ House Always Pays ♥</span>
+              <span>♣ Lucky 7s ♣</span>
+              <span>★ High Rollers Only ★</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* HERO */}
-      <section className="relative overflow-hidden px-6 pt-24 pb-20 text-center">
+      <section className="relative overflow-hidden px-6 pt-20 pb-20 text-center">
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 opacity-30"
@@ -149,29 +214,67 @@ function Index() {
               "radial-gradient(circle at 20% 30%, var(--neon-red) 0%, transparent 40%), radial-gradient(circle at 80% 60%, var(--neon-purple) 0%, transparent 45%), radial-gradient(circle at 50% 100%, var(--gold) 0%, transparent 50%)",
           }}
         />
+
+        {/* Floating chips */}
+        <ChipIcon className="pointer-events-none absolute top-12 left-8 h-16 w-16 opacity-70 animate-spin-slow" />
+        <ChipIcon className="pointer-events-none absolute bottom-12 right-10 h-20 w-20 opacity-60 animate-spin-slow" />
+        <ChipIcon className="pointer-events-none absolute top-1/3 right-20 h-10 w-10 opacity-50 animate-spin-slow hidden md:block" />
+
         <div className="relative mx-auto max-w-4xl">
-          <p className="mb-4 text-xs font-bold uppercase tracking-[0.4em] text-neon-purple">
-            ★ Internal Leaderboard ★
-          </p>
+          {/* Neon OPEN sign */}
+          <div className="mb-6 inline-flex items-center gap-3 rounded-full border-2 border-neon-red px-5 py-1.5 text-xs font-black uppercase tracking-[0.4em] text-neon-red animate-flicker"
+            style={{ borderColor: "var(--neon-red)" }}>
+            <span>●</span> Open 24 / 7 <span>●</span>
+          </div>
+
           <h1 className="font-serif text-6xl font-black leading-none text-neon-gold animate-neon-pulse md:text-8xl">
             Champions Casino
           </h1>
+
+          {/* Bulb underline */}
+          <div className="mx-auto mt-6 max-w-md">
+            <Bulbs count={20} />
+          </div>
+
           <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground md:text-xl">
             Who hit the biggest jackpot for the company?
           </p>
+
           <a
             href="#leaderboard"
             className="mt-10 inline-flex items-center justify-center rounded-full bg-gradient-gold px-10 py-4 text-base font-black uppercase tracking-wider text-primary-foreground shadow-neon-gold transition-transform hover:scale-105"
           >
             View Leaderboard
           </a>
+
+          {/* Jackpot stats strip */}
+          <div className="mt-14 grid grid-cols-3 gap-3 rounded-2xl border-2 border-gold bg-card/60 p-4 shadow-neon-gold md:gap-6 md:p-6">
+            <div>
+              <p className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground">Total Jackpot</p>
+              <p className="mt-1 font-mono text-xl font-black text-neon-gold md:text-3xl">{formatMoney(totalRevenue)}</p>
+            </div>
+            <div className="border-x border-border">
+              <p className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground">Players</p>
+              <p className="mt-1 font-mono text-xl font-black text-neon-red md:text-3xl">{sorted.length}</p>
+            </div>
+            <div>
+              <p className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground">Top Spin</p>
+              <p className="mt-1 font-mono text-xl font-black text-neon-purple md:text-3xl">{formatMoney(sorted[0].revenue)}</p>
+            </div>
+          </div>
         </div>
       </section>
+
+      {/* CASINO STRIPE DIVIDER */}
+      <div className="casino-stripe h-3" aria-hidden />
 
       {/* LEADERBOARD */}
       <section id="leaderboard" className="px-6 py-20">
         <div className="mx-auto max-w-6xl">
           <div className="mb-12 text-center">
+            <p className="mb-2 text-xs font-bold uppercase tracking-[0.4em] text-neon-purple animate-flicker">
+              ♠ ♥ ♦ ♣
+            </p>
             <h2 className="text-4xl font-black md:text-5xl">
               The <span className="text-neon-red">High Rollers</span>
             </h2>
@@ -188,10 +291,17 @@ function Index() {
         </div>
       </section>
 
+      <div className="casino-stripe h-3" aria-hidden />
+
       {/* PODIUM */}
-      <section className="border-y border-border bg-background/50 px-6 py-20">
+      <section className="relative overflow-hidden bg-background/50 px-6 py-20">
+        <ChipIcon className="pointer-events-none absolute -top-6 right-10 h-16 w-16 opacity-40 animate-spin-slow" />
+        <ChipIcon className="pointer-events-none absolute bottom-4 left-10 h-12 w-12 opacity-40 animate-spin-slow" />
         <div className="mx-auto max-w-5xl">
           <div className="mb-14 text-center">
+            <p className="mb-3 text-xs font-bold uppercase tracking-[0.4em] text-neon-red">
+              ★ ★ ★ Hall of Fame ★ ★ ★
+            </p>
             <h2 className="text-4xl font-black md:text-5xl">
               Top <span className="text-neon-gold">Winners</span>
             </h2>
@@ -208,9 +318,18 @@ function Index() {
         </div>
       </section>
 
+      <div className="casino-stripe h-3" aria-hidden />
+
       {/* CLOSING */}
-      <section className="px-6 py-24 text-center">
-        <div className="mx-auto max-w-2xl">
+      <section className="relative px-6 py-24 text-center overflow-hidden">
+        <div className="pointer-events-none absolute inset-0 opacity-25" aria-hidden
+          style={{ backgroundImage: "radial-gradient(circle at 50% 50%, var(--neon-purple) 0%, transparent 60%)" }} />
+        <div className="relative mx-auto max-w-2xl">
+          <div className="mb-6 flex justify-center gap-2 text-3xl">
+            <span className="text-neon-red animate-neon-pulse">7</span>
+            <span className="text-neon-gold animate-neon-pulse" style={{ animationDelay: "0.2s" }}>7</span>
+            <span className="text-neon-purple animate-neon-pulse" style={{ animationDelay: "0.4s" }}>7</span>
+          </div>
           <h2 className="text-4xl font-black leading-tight text-neon-purple md:text-5xl">
             Keep Spinning the Wheels of Success
           </h2>
@@ -227,7 +346,7 @@ function Index() {
           </button>
         </div>
 
-        <p className="mt-16 text-xs uppercase tracking-[0.3em] text-muted-foreground">
+        <p className="relative mt-16 text-xs uppercase tracking-[0.3em] text-muted-foreground">
           © Champions Casino — House Always Wins
         </p>
       </section>
