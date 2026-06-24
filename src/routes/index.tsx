@@ -4,9 +4,16 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Champions Casino — Internal Revenue Leaderboard" },
-      { name: "description", content: "A premium casino-style leaderboard celebrating the employees who hit the biggest revenue jackpots." },
+      {
+        name: "description",
+        content:
+          "A premium casino-style leaderboard celebrating the employees who hit the biggest revenue jackpots.",
+      },
       { property: "og:title", content: "Champions Casino — Internal Revenue Leaderboard" },
-      { property: "og:description", content: "Who hit the biggest jackpot for the company? Spin the wheels and find out." },
+      {
+        property: "og:description",
+        content: "Who hit the biggest jackpot for the company? Spin the wheels and find out.",
+      },
     ],
   }),
   component: Index,
@@ -60,9 +67,24 @@ function ChipIcon({ className = "" }: { className?: string }) {
   return (
     <svg viewBox="0 0 64 64" className={className} aria-hidden="true">
       <circle cx="32" cy="32" r="30" fill="var(--neon-red)" stroke="var(--gold)" strokeWidth="3" />
-      <circle cx="32" cy="32" r="18" fill="none" stroke="var(--gold)" strokeWidth="2" strokeDasharray="4 4" />
+      <circle
+        cx="32"
+        cy="32"
+        r="18"
+        fill="none"
+        stroke="var(--gold)"
+        strokeWidth="2"
+        strokeDasharray="4 4"
+      />
       <circle cx="32" cy="32" r="10" fill="var(--gold)" />
-      <text x="32" y="37" textAnchor="middle" fontSize="12" fontWeight="900" fill="var(--background)">
+      <text
+        x="32"
+        y="37"
+        textAnchor="middle"
+        fontSize="12"
+        fontWeight="900"
+        fill="var(--background)"
+      >
         $
       </text>
     </svg>
@@ -222,13 +244,15 @@ function Index() {
 
         <div className="relative mx-auto max-w-4xl">
           {/* Neon OPEN sign */}
-          <div className="mb-6 inline-flex items-center gap-3 rounded-full border-2 border-neon-red px-5 py-1.5 text-xs font-black uppercase tracking-[0.4em] text-neon-red animate-flicker"
-            style={{ borderColor: "var(--neon-red)" }}>
+          <div
+            className="mb-6 inline-flex items-center gap-3 rounded-full border-2 border-neon-red px-5 py-1.5 text-xs font-black uppercase tracking-[0.4em] text-neon-red animate-flicker"
+            style={{ borderColor: "var(--neon-red)" }}
+          >
             <span>●</span> Open 24 / 7 <span>●</span>
           </div>
 
           <h1 className="font-serif text-6xl font-black leading-none text-neon-gold animate-neon-pulse md:text-8xl">
-            Champions Casino
+            Champions Casino1
           </h1>
 
           {/* Bulb underline */}
@@ -250,16 +274,28 @@ function Index() {
           {/* Jackpot stats strip */}
           <div className="mt-14 grid grid-cols-3 gap-3 rounded-2xl border-2 border-gold bg-card/60 p-4 shadow-neon-gold md:gap-6 md:p-6">
             <div>
-              <p className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground">Total Jackpot</p>
-              <p className="mt-1 font-mono text-xl font-black text-neon-gold md:text-3xl">{formatMoney(totalRevenue)}</p>
+              <p className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
+                Total Jackpot
+              </p>
+              <p className="mt-1 font-mono text-xl font-black text-neon-gold md:text-3xl">
+                {formatMoney(totalRevenue)}
+              </p>
             </div>
             <div className="border-x border-border">
-              <p className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground">Players</p>
-              <p className="mt-1 font-mono text-xl font-black text-neon-red md:text-3xl">{sorted.length}</p>
+              <p className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
+                Players
+              </p>
+              <p className="mt-1 font-mono text-xl font-black text-neon-red md:text-3xl">
+                {sorted.length}
+              </p>
             </div>
             <div>
-              <p className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground">Top Spin</p>
-              <p className="mt-1 font-mono text-xl font-black text-neon-purple md:text-3xl">{formatMoney(sorted[0].revenue)}</p>
+              <p className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
+                Top Spin
+              </p>
+              <p className="mt-1 font-mono text-xl font-black text-neon-purple md:text-3xl">
+                {formatMoney(sorted[0].revenue)}
+              </p>
             </div>
           </div>
         </div>
@@ -305,9 +341,7 @@ function Index() {
             <h2 className="text-4xl font-black md:text-5xl">
               Top <span className="text-neon-gold">Winners</span>
             </h2>
-            <p className="mt-3 text-muted-foreground">
-              The three biggest jackpots of the period.
-            </p>
+            <p className="mt-3 text-muted-foreground">The three biggest jackpots of the period.</p>
           </div>
 
           <div className="grid grid-cols-3 items-end gap-4 md:gap-8">
@@ -322,20 +356,33 @@ function Index() {
 
       {/* CLOSING */}
       <section className="relative px-6 py-24 text-center overflow-hidden">
-        <div className="pointer-events-none absolute inset-0 opacity-25" aria-hidden
-          style={{ backgroundImage: "radial-gradient(circle at 50% 50%, var(--neon-purple) 0%, transparent 60%)" }} />
+        <div
+          className="pointer-events-none absolute inset-0 opacity-25"
+          aria-hidden
+          style={{
+            backgroundImage:
+              "radial-gradient(circle at 50% 50%, var(--neon-purple) 0%, transparent 60%)",
+          }}
+        />
         <div className="relative mx-auto max-w-2xl">
           <div className="mb-6 flex justify-center gap-2 text-3xl">
             <span className="text-neon-red animate-neon-pulse">7</span>
-            <span className="text-neon-gold animate-neon-pulse" style={{ animationDelay: "0.2s" }}>7</span>
-            <span className="text-neon-purple animate-neon-pulse" style={{ animationDelay: "0.4s" }}>7</span>
+            <span className="text-neon-gold animate-neon-pulse" style={{ animationDelay: "0.2s" }}>
+              7
+            </span>
+            <span
+              className="text-neon-purple animate-neon-pulse"
+              style={{ animationDelay: "0.4s" }}
+            >
+              7
+            </span>
           </div>
           <h2 className="text-4xl font-black leading-tight text-neon-purple md:text-5xl">
             Keep Spinning the Wheels of Success
           </h2>
           <p className="mt-6 text-lg text-muted-foreground">
-            Every deal closed lights up the floor. Every quarter, new jackpots.
-            Here's to the team turning every spin into another win.
+            Every deal closed lights up the floor. Every quarter, new jackpots. Here's to the team
+            turning every spin into another win.
           </p>
           <button
             type="button"
