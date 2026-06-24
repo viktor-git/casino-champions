@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
@@ -19,22 +20,35 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
+const SHEET_CSV_URL =
+  "https://docs.google.com/spreadsheets/d/e/2PACX-1vTYMPFxI9wX1OajKt7Xr0exwWR-6VNEGpUE1N6Wf_phXLMZQ1_U1bwh1CXq9hvBCyVCctF-KfQEon6B/pub?gid=0&single=true&output=csv";
+
 type Employee = {
   name: string;
   revenue: number;
   initials: string;
 };
 
-const employees: Employee[] = [
-  { name: "John Smith", revenue: 125000, initials: "JS" },
-  { name: "Emma Johnson", revenue: 98000, initials: "EJ" },
-  { name: "Michael Brown", revenue: 76000, initials: "MB" },
-  { name: "Sophia Davis", revenue: 64500, initials: "SD" },
-  { name: "Liam Wilson", revenue: 58200, initials: "LW" },
-  { name: "Olivia Martinez", revenue: 51800, initials: "OM" },
-  { name: "Noah Anderson", revenue: 47300, initials: "NA" },
-  { name: "Ava Thompson", revenue: 42100, initials: "AT" },
-];
+function parseInitials(name: string): string {
+  const parts = name.trim().split(/\s+/);
+  return ((parts[0]?.[0] ?? "") + (parts[parts.length - 1]?.[0] ?? "")).toUpperCase();
+}
+
+function parseCsv(text: string): Employee[] {
+  const [, ...rows] = text.trim().split("\n");
+  return rows
+    .map((row) => {
+      const [name, revenueRaw, initialsRaw] = row.split(",");
+      const revenue = Number(revenueRaw?.trim().replace(/[^0-9]/g, ""));
+      if (!name?.trim() || !revenue) return null;
+      return {
+        name: name.trim(),
+        revenue,
+        initials: initialsRaw?.trim() || parseInitials(name),
+      };
+    })
+    .filter(Boolean) as Employee[];
+}
 
 const formatMoney = (n: number) => `$${n.toLocaleString("en-US")}`;
 
@@ -203,7 +217,29 @@ function PodiumBlock({
   );
 }
 
+function LoadingScreen() {
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-background">
+      <p className="font-mono text-2xl font-black text-neon-gold animate-neon-pulse">
+        🎰 Loading…
+      </p>
+    </div>
+  );
+}
+
 function Index() {
+  const [employees, setEmployees] = useState<Employee[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch(SHEET_CSV_URL)
+      .then((r) => r.text())
+      .then((text) => setEmployees(parseCsv(text)))
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) return <LoadingScreen />;
+
   const sorted = [...employees].sort((a, b) => b.revenue - a.revenue);
   const top3 = sorted.slice(0, 3);
   const totalRevenue = sorted.reduce((s, e) => s + e.revenue, 0);
@@ -252,7 +288,7 @@ function Index() {
           </div>
 
           <h1 className="font-serif text-6xl font-black leading-none text-neon-gold animate-neon-pulse md:text-8xl">
-            Champions Casino1
+            Champions Casino
           </h1>
 
           {/* Bulb underline */}
