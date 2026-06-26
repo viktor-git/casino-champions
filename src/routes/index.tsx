@@ -75,6 +75,7 @@ function SlotCard({ employee, rank }: { employee: Employee; rank: number }) {
   const finalDigits = formatMoney(employee.revenue).replace(/[^0-9]/g, "").split("");
   const [revealed, setRevealed] = useState(false);
   const [spinning, setSpinning] = useState(false);
+  const [jackpot, setJackpot] = useState(false);
   const [display, setDisplay] = useState<string[]>(() => finalDigits.map(() => "0"));
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -85,7 +86,7 @@ function SlotCard({ employee, rank }: { employee: Employee; rank: number }) {
   }, []);
 
   const handleSpin = () => {
-    if (spinning || revealed) return;
+    if (spinning || revealed || jackpot) return;
     setSpinning(true);
     intervalRef.current = setInterval(() => {
       setDisplay(finalDigits.map(() => String(Math.floor(Math.random() * 10))));
@@ -102,7 +103,11 @@ function SlotCard({ employee, rank }: { employee: Employee; rank: number }) {
           if (i === finalDigits.length - 1) {
             if (intervalRef.current) clearInterval(intervalRef.current);
             setSpinning(false);
-            setRevealed(true);
+            setJackpot(true);
+            window.setTimeout(() => {
+              setJackpot(false);
+              setRevealed(true);
+            }, 1800);
           }
         },
         1200 + i * 250,
@@ -124,6 +129,21 @@ function SlotCard({ employee, rank }: { employee: Employee; rank: number }) {
         rank === 1 ? "md:scale-105" : "",
       ].join(" ")}
     >
+      {jackpot && (
+        <div className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center rounded-2xl bg-background/80 backdrop-blur-sm animate-fade-in">
+          <div className="text-center">
+            <div className="flex justify-center gap-1 text-3xl">
+              <span className="text-neon-red animate-neon-pulse">7</span>
+              <span className="text-neon-gold animate-neon-pulse" style={{ animationDelay: "0.15s" }}>7</span>
+              <span className="text-neon-purple animate-neon-pulse" style={{ animationDelay: "0.3s" }}>7</span>
+            </div>
+            <p className="mt-2 font-black uppercase tracking-[0.3em] text-neon-gold text-xl md:text-2xl animate-flicker">
+              ДЖЕКПОТ!
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Bulb frame */}
       <Bulbs count={10} className="absolute top-2 left-4 right-4" />
       <Bulbs count={10} className="absolute bottom-2 left-4 right-4" />
@@ -174,17 +194,17 @@ function SlotCard({ employee, rank }: { employee: Employee; rank: number }) {
         <button
           type="button"
           onClick={handleSpin}
-          disabled={spinning || revealed}
+          disabled={spinning || revealed || jackpot}
           className={[
             "mt-3 w-full rounded-full px-4 py-2 text-xs font-black uppercase tracking-wider transition-transform",
             revealed
               ? "border border-border bg-transparent text-muted-foreground"
-              : spinning
+              : spinning || jackpot
                 ? "bg-gradient-gold text-primary-foreground opacity-80"
                 : "bg-gradient-gold text-primary-foreground shadow-neon-gold hover:scale-105",
           ].join(" ")}
         >
-          {revealed ? "Джекпот открыт" : spinning ? "Крутим..." : "Узнать сумму"}
+          {revealed ? "Джекпот открыт" : jackpot ? "ДЖЕКПОТ!" : spinning ? "Крутим..." : "Узнать сумму"}
         </button>
       </div>
 
