@@ -4,10 +4,10 @@ import { useEffect, useRef, useState } from "react";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Champions Casino — Internal Revenue Leaderboard" },
-      { name: "description", content: "A premium casino-style leaderboard celebrating the employees who hit the biggest revenue jackpots." },
-      { property: "og:title", content: "Champions Casino — Internal Revenue Leaderboard" },
-      { property: "og:description", content: "Who hit the biggest jackpot for the company? Spin the wheels and find out." },
+      { title: "Казино Чемпионов — Внутренний рейтинг по выручке" },
+      { name: "description", content: "Премиальный рейтинг в стиле казино, посвящённый сотрудникам, сорвавшим самый крупный джекпот по выручке." },
+      { property: "og:title", content: "Казино Чемпионов — Внутренний рейтинг по выручке" },
+      { property: "og:description", content: "Кто сорвал самый большой джекпот для компании? Крутите барабаны и узнайте." },
     ],
   }),
   component: Index,
@@ -20,17 +20,17 @@ type Employee = {
 };
 
 const employees: Employee[] = [
-  { name: "John Smith", revenue: 125000, initials: "JS" },
-  { name: "Emma Johnson", revenue: 98000, initials: "EJ" },
-  { name: "Michael Brown", revenue: 76000, initials: "MB" },
-  { name: "Sophia Davis", revenue: 64500, initials: "SD" },
-  { name: "Liam Wilson", revenue: 58200, initials: "LW" },
-  { name: "Olivia Martinez", revenue: 51800, initials: "OM" },
-  { name: "Noah Anderson", revenue: 47300, initials: "NA" },
-  { name: "Ava Thompson", revenue: 42100, initials: "AT" },
+  { name: "Иван Смирнов", revenue: 12500000, initials: "ИС" },
+  { name: "Анна Иванова", revenue: 9800000, initials: "АИ" },
+  { name: "Михаил Кузнецов", revenue: 7600000, initials: "МК" },
+  { name: "София Петрова", revenue: 6450000, initials: "СП" },
+  { name: "Лев Соколов", revenue: 5820000, initials: "ЛС" },
+  { name: "Ольга Морозова", revenue: 5180000, initials: "ОМ" },
+  { name: "Никита Васильев", revenue: 4730000, initials: "НВ" },
+  { name: "Алиса Фёдорова", revenue: 4210000, initials: "АФ" },
 ];
 
-const formatMoney = (n: number) => `$${n.toLocaleString("en-US")}`;
+const formatMoney = (n: number) => `${n.toLocaleString("ru-RU")} ₽`;
 
 function Crown({ className = "" }: { className?: string }) {
   return (
@@ -135,7 +135,7 @@ function SlotCard({ employee, rank }: { employee: Employee; rank: number }) {
       {/* Slot machine top */}
       <div className="mb-4 flex items-center justify-between text-xs font-bold uppercase tracking-widest text-muted-foreground">
         <span>#{rank.toString().padStart(2, "0")}</span>
-        <span className="text-neon-red">● JACKPOT</span>
+        <span className="text-neon-red">● ДЖЕКПОТ</span>
       </div>
 
       {/* Avatar */}
@@ -148,7 +148,7 @@ function SlotCard({ employee, rank }: { employee: Employee; rank: number }) {
       {/* Revenue reel display */}
       <div className="rounded-lg border border-border bg-background/60 px-3 py-3">
         <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-          Revenue Generated
+          Сгенерированная выручка
         </p>
         <div className="flex items-center justify-center gap-1">
           <span
@@ -157,7 +157,7 @@ function SlotCard({ employee, rank }: { employee: Employee; rank: number }) {
               revealed ? (isTop ? "text-neon-gold" : "text-foreground") : "text-muted-foreground",
             ].join(" ")}
           >
-            $
+            ₽
           </span>
           {reelChars.map((c, i) => (
             <span
@@ -184,7 +184,7 @@ function SlotCard({ employee, rank }: { employee: Employee; rank: number }) {
                 : "bg-gradient-gold text-primary-foreground shadow-neon-gold hover:scale-105",
           ].join(" ")}
         >
-          {revealed ? "Jackpot Revealed" : spinning ? "Spinning..." : "Find Out the Amount"}
+          {revealed ? "Джекпот открыт" : spinning ? "Крутим..." : "Узнать сумму"}
         </button>
       </div>
 
@@ -252,12 +252,12 @@ function Index() {
         <div className="flex w-max gap-12 whitespace-nowrap animate-ticker text-xs font-bold uppercase tracking-[0.35em] text-neon-gold">
           {Array.from({ length: 2 }).map((_, k) => (
             <div key={k} className="flex gap-12">
-              <span>★ Jackpot Hits ★</span>
-              <span>♠ Big Wins ♠</span>
-              <span>♦ 24/7 Open ♦</span>
-              <span>♥ House Always Pays ♥</span>
-              <span>♣ Lucky 7s ♣</span>
-              <span>★ High Rollers Only ★</span>
+              <span>★ Срываем джекпоты ★</span>
+              <span>♠ Крупные выигрыши ♠</span>
+              <span>♦ Открыто 24/7 ♦</span>
+              <span>♥ Казино всегда платит ♥</span>
+              <span>♣ Счастливые семёрки ♣</span>
+              <span>★ Только хайроллеры ★</span>
             </div>
           ))}
         </div>
@@ -283,11 +283,11 @@ function Index() {
           {/* Neon OPEN sign */}
           <div className="mb-6 inline-flex items-center gap-3 rounded-full border-2 border-neon-red px-5 py-1.5 text-xs font-black uppercase tracking-[0.4em] text-neon-red animate-flicker"
             style={{ borderColor: "var(--neon-red)" }}>
-            <span>●</span> Open 24 / 7 <span>●</span>
+            <span>●</span> Открыто 24 / 7 <span>●</span>
           </div>
 
           <h1 className="font-serif text-6xl font-black leading-none text-neon-gold animate-neon-pulse md:text-8xl">
-            Champions Casino
+            Казино Чемпионов
           </h1>
 
           {/* Bulb underline */}
@@ -296,28 +296,28 @@ function Index() {
           </div>
 
           <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground md:text-xl">
-            Who hit the biggest jackpot for the company?
+            Кто сорвал самый большой джекпот для компании?
           </p>
 
           <a
             href="#leaderboard"
             className="mt-10 inline-flex items-center justify-center rounded-full bg-gradient-gold px-10 py-4 text-base font-black uppercase tracking-wider text-primary-foreground shadow-neon-gold transition-transform hover:scale-105"
           >
-            View Leaderboard
+            Открыть рейтинг
           </a>
 
           {/* Jackpot stats strip */}
           <div className="mt-14 grid grid-cols-3 gap-3 rounded-2xl border-2 border-gold bg-card/60 p-4 shadow-neon-gold md:gap-6 md:p-6">
             <div>
-              <p className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground">Total Jackpot</p>
+              <p className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground">Общий джекпот</p>
               <p className="mt-1 font-mono text-xl font-black text-neon-gold md:text-3xl">{formatMoney(totalRevenue)}</p>
             </div>
             <div className="border-x border-border">
-              <p className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground">Players</p>
+              <p className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground">Игроки</p>
               <p className="mt-1 font-mono text-xl font-black text-neon-red md:text-3xl">{sorted.length}</p>
             </div>
             <div>
-              <p className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground">Top Spin</p>
+              <p className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground">Лучший спин</p>
               <p className="mt-1 font-mono text-xl font-black text-neon-purple md:text-3xl">{formatMoney(sorted[0].revenue)}</p>
             </div>
           </div>
@@ -335,10 +335,10 @@ function Index() {
               ♠ ♥ ♦ ♣
             </p>
             <h2 className="text-4xl font-black md:text-5xl">
-              The <span className="text-neon-red">High Rollers</span>
+              Наши <span className="text-neon-red">Хайроллеры</span>
             </h2>
             <p className="mt-3 text-muted-foreground">
-              Every employee is a slot machine. Every spin is revenue on the board.
+              Каждый сотрудник — игровой автомат. Каждый спин — выручка на табло.
             </p>
           </div>
 
@@ -359,13 +359,13 @@ function Index() {
         <div className="mx-auto max-w-5xl">
           <div className="mb-14 text-center">
             <p className="mb-3 text-xs font-bold uppercase tracking-[0.4em] text-neon-red">
-              ★ ★ ★ Hall of Fame ★ ★ ★
+              ★ ★ ★ Зал славы ★ ★ ★
             </p>
             <h2 className="text-4xl font-black md:text-5xl">
-              Top <span className="text-neon-gold">Winners</span>
+              Лучшие <span className="text-neon-gold">Победители</span>
             </h2>
             <p className="mt-3 text-muted-foreground">
-              The three biggest jackpots of the period.
+              Три самых крупных джекпота периода.
             </p>
           </div>
 
@@ -390,23 +390,23 @@ function Index() {
             <span className="text-neon-purple animate-neon-pulse" style={{ animationDelay: "0.4s" }}>7</span>
           </div>
           <h2 className="text-4xl font-black leading-tight text-neon-purple md:text-5xl">
-            Keep Spinning the Wheels of Success
+            Крутите барабаны успеха дальше
           </h2>
           <p className="mt-6 text-lg text-muted-foreground">
-            Every deal closed lights up the floor. Every quarter, new jackpots.
-            Here's to the team turning every spin into another win.
+            Каждая закрытая сделка зажигает огни зала. Каждый квартал — новые джекпоты.
+            За команду, которая превращает любой спин в победу.
           </p>
           <button
             type="button"
             onClick={() => typeof window !== "undefined" && window.location.reload()}
             className="mt-10 inline-flex items-center justify-center rounded-full border-2 border-gold bg-transparent px-10 py-4 text-base font-black uppercase tracking-wider text-neon-gold transition-colors hover:bg-gradient-gold hover:text-primary-foreground"
           >
-            Refresh Results
+            Обновить результаты
           </button>
         </div>
 
         <p className="relative mt-16 text-xs uppercase tracking-[0.3em] text-muted-foreground">
-          © Champions Casino — House Always Wins
+          © Казино Чемпионов — Казино всегда выигрывает
         </p>
       </section>
     </main>
