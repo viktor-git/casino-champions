@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useRef, useState } from "react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -71,7 +72,49 @@ function ChipIcon({ className = "" }: { className?: string }) {
 
 function SlotCard({ employee, rank }: { employee: Employee; rank: number }) {
   const isTop = rank <= 3;
-  const reels = ["7", "7", "7"];
+  const finalDigits = formatMoney(employee.revenue).replace(/[^0-9]/g, "").split("");
+  const [revealed, setRevealed] = useState(false);
+  const [spinning, setSpinning] = useState(false);
+  const [display, setDisplay] = useState<string[]>(() => finalDigits.map(() => "0"));
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, []);
+
+  const handleSpin = () => {
+    if (spinning || revealed) return;
+    setSpinning(true);
+    intervalRef.current = setInterval(() => {
+      setDisplay(finalDigits.map(() => String(Math.floor(Math.random() * 10))));
+    }, 70);
+
+    finalDigits.forEach((digit, i) => {
+      window.setTimeout(
+        () => {
+          setDisplay((prev) => {
+            const next = [...prev];
+            next[i] = digit;
+            return next;
+          });
+          if (i === finalDigits.length - 1) {
+            if (intervalRef.current) clearInterval(intervalRef.current);
+            setSpinning(false);
+            setRevealed(true);
+          }
+        },
+        1200 + i * 250,
+      );
+    });
+  };
+
+  const reelChars = spinning
+    ? display
+    : revealed
+      ? display
+      : finalDigits.map(() => "?");
   return (
     <div
       className={[
@@ -102,31 +145,47 @@ function SlotCard({ employee, rank }: { employee: Employee; rank: number }) {
 
       <h3 className="mb-3 text-lg font-bold text-foreground">{employee.name}</h3>
 
-      {/* Triple-7 reel display */}
-      <div className="mb-3 grid grid-cols-3 gap-1.5 rounded-md border border-border bg-background/80 p-2">
-        {reels.map((r, i) => (
-          <div
-            key={i}
-            className="flex h-10 items-center justify-center rounded bg-card font-serif text-2xl font-black text-neon-red"
-          >
-            {r}
-          </div>
-        ))}
-      </div>
-
-      {/* Revenue display */}
+      {/* Revenue reel display */}
       <div className="rounded-lg border border-border bg-background/60 px-3 py-3">
-        <p className="mb-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+        <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
           Revenue Generated
         </p>
-        <p
+        <div className="flex items-center justify-center gap-1">
+          <span
+            className={[
+              "font-mono text-2xl font-black",
+              revealed ? (isTop ? "text-neon-gold" : "text-foreground") : "text-muted-foreground",
+            ].join(" ")}
+          >
+            $
+          </span>
+          {reelChars.map((c, i) => (
+            <span
+              key={i}
+              className={[
+                "flex h-9 w-6 items-center justify-center rounded bg-card font-mono text-xl font-black tabular-nums",
+                spinning ? "text-neon-red" : revealed ? (isTop ? "text-neon-gold" : "text-foreground") : "text-muted-foreground",
+              ].join(" ")}
+            >
+              {c}
+            </span>
+          ))}
+        </div>
+        <button
+          type="button"
+          onClick={handleSpin}
+          disabled={spinning || revealed}
           className={[
-            "font-mono text-2xl font-black tabular-nums",
-            isTop ? "text-neon-gold" : "text-foreground",
+            "mt-3 w-full rounded-full px-4 py-2 text-xs font-black uppercase tracking-wider transition-transform",
+            revealed
+              ? "border border-border bg-transparent text-muted-foreground"
+              : spinning
+                ? "bg-gradient-gold text-primary-foreground opacity-80"
+                : "bg-gradient-gold text-primary-foreground shadow-neon-gold hover:scale-105",
           ].join(" ")}
         >
-          {formatMoney(employee.revenue)}
-        </p>
+          {revealed ? "Jackpot Revealed" : spinning ? "Spinning..." : "Find Out the Amount"}
+        </button>
       </div>
 
       {/* Suit row */}
