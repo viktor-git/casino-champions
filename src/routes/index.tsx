@@ -4,10 +4,10 @@ import { useEffect, useRef, useState } from "react";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Champions Casino — Internal Revenue Leaderboard" },
-      { name: "description", content: "A premium casino-style leaderboard celebrating the employees who hit the biggest revenue jackpots." },
-      { property: "og:title", content: "Champions Casino — Internal Revenue Leaderboard" },
-      { property: "og:description", content: "Who hit the biggest jackpot for the company? Spin the wheels and find out." },
+      { title: "Казино Чемпионов — Внутренний рейтинг по выручке" },
+      { name: "description", content: "Премиальный рейтинг в стиле казино, посвящённый сотрудникам, сорвавшим самый крупный джекпот по выручке." },
+      { property: "og:title", content: "Казино Чемпионов — Внутренний рейтинг по выручке" },
+      { property: "og:description", content: "Кто сорвал самый большой джекпот для компании? Крутите барабаны и узнайте." },
     ],
   }),
   component: Index,
@@ -20,17 +20,17 @@ type Employee = {
 };
 
 const employees: Employee[] = [
-  { name: "John Smith", revenue: 125000, initials: "JS" },
-  { name: "Emma Johnson", revenue: 98000, initials: "EJ" },
-  { name: "Michael Brown", revenue: 76000, initials: "MB" },
-  { name: "Sophia Davis", revenue: 64500, initials: "SD" },
-  { name: "Liam Wilson", revenue: 58200, initials: "LW" },
-  { name: "Olivia Martinez", revenue: 51800, initials: "OM" },
-  { name: "Noah Anderson", revenue: 47300, initials: "NA" },
-  { name: "Ava Thompson", revenue: 42100, initials: "AT" },
+  { name: "Иван Смирнов", revenue: 12500000, initials: "ИС" },
+  { name: "Анна Иванова", revenue: 9800000, initials: "АИ" },
+  { name: "Михаил Кузнецов", revenue: 7600000, initials: "МК" },
+  { name: "София Петрова", revenue: 6450000, initials: "СП" },
+  { name: "Лев Соколов", revenue: 5820000, initials: "ЛС" },
+  { name: "Ольга Морозова", revenue: 5180000, initials: "ОМ" },
+  { name: "Никита Васильев", revenue: 4730000, initials: "НВ" },
+  { name: "Алиса Фёдорова", revenue: 4210000, initials: "АФ" },
 ];
 
-const formatMoney = (n: number) => `$${n.toLocaleString("en-US")}`;
+const formatMoney = (n: number) => `${n.toLocaleString("ru-RU")} ₽`;
 
 function Crown({ className = "" }: { className?: string }) {
   return (
