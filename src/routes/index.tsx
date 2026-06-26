@@ -148,7 +148,7 @@ function SlotCard({ employee, rank }: { employee: Employee; rank: number }) {
       {/* Revenue reel display */}
       <div className="rounded-lg border border-border bg-background/60 px-3 py-3">
         <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-          Сгенерированная выручка
+          Выручка
         </p>
         <div className="flex items-center justify-center gap-1">
           <span
