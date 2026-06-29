@@ -220,9 +220,7 @@ function PodiumBlock({
 function LoadingScreen() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background">
-      <p className="font-mono text-2xl font-black text-neon-gold animate-neon-pulse">
-        🎰 Loading…
-      </p>
+      <p className="font-mono text-2xl font-black text-neon-gold animate-neon-pulse">🎰 Loading…</p>
     </div>
   );
 }
