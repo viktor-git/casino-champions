@@ -1,19 +1,20 @@
 import { useState, useEffect } from "react";
 import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useRef, useState } from "react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Champions Casino — Internal Revenue Leaderboard" },
+      { title: "Казино Чемпионов — Внутренний рейтинг по выручке" },
       {
         name: "description",
         content:
-          "A premium casino-style leaderboard celebrating the employees who hit the biggest revenue jackpots.",
+          "Премиальный рейтинг в стиле казино, посвящённый сотрудникам, сорвавшим самый крупный джекпот по выручке.",
       },
-      { property: "og:title", content: "Champions Casino — Internal Revenue Leaderboard" },
+      { property: "og:title", content: "Казино Чемпионов — Внутренний рейтинг по выручке" },
       {
         property: "og:description",
-        content: "Who hit the biggest jackpot for the company? Spin the wheels and find out.",
+        content: "Кто сорвал самый большой джекпот для компании? Крутите барабаны и узнайте.",
       },
     ],
   }),
@@ -50,7 +51,7 @@ function parseCsv(text: string): Employee[] {
     .filter(Boolean) as Employee[];
 }
 
-const formatMoney = (n: number) => `$${n.toLocaleString("en-US")}`;
+const formatMoney = (n: number) => `${n.toLocaleString("ru-RU")} ₽`;
 
 function Crown({ className = "" }: { className?: string }) {
   return (
@@ -107,7 +108,52 @@ function ChipIcon({ className = "" }: { className?: string }) {
 
 function SlotCard({ employee, rank }: { employee: Employee; rank: number }) {
   const isTop = rank <= 3;
-  const reels = ["7", "7", "7"];
+  const finalDigits = formatMoney(employee.revenue)
+    .replace(/[^0-9]/g, "")
+    .split("");
+  const [revealed, setRevealed] = useState(false);
+  const [spinning, setSpinning] = useState(false);
+  const [jackpot, setJackpot] = useState(false);
+  const [display, setDisplay] = useState<string[]>(() => finalDigits.map(() => "0"));
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, []);
+
+  const handleSpin = () => {
+    if (spinning || revealed || jackpot) return;
+    setSpinning(true);
+    intervalRef.current = setInterval(() => {
+      setDisplay(finalDigits.map(() => String(Math.floor(Math.random() * 10))));
+    }, 70);
+
+    finalDigits.forEach((digit, i) => {
+      window.setTimeout(
+        () => {
+          setDisplay((prev) => {
+            const next = [...prev];
+            next[i] = digit;
+            return next;
+          });
+          if (i === finalDigits.length - 1) {
+            if (intervalRef.current) clearInterval(intervalRef.current);
+            setSpinning(false);
+            setJackpot(true);
+            window.setTimeout(() => {
+              setJackpot(false);
+              setRevealed(true);
+            }, 1800);
+          }
+        },
+        1200 + i * 250,
+      );
+    });
+  };
+
+  const reelChars = spinning ? display : revealed ? display : finalDigits.map(() => "?");
   return (
     <div
       className={[
@@ -117,6 +163,31 @@ function SlotCard({ employee, rank }: { employee: Employee; rank: number }) {
         rank === 1 ? "md:scale-105" : "",
       ].join(" ")}
     >
+      {jackpot && (
+        <div className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center rounded-2xl bg-background/80 backdrop-blur-sm animate-fade-in">
+          <div className="text-center">
+            <div className="flex justify-center gap-1 text-3xl">
+              <span className="text-neon-red animate-neon-pulse">7</span>
+              <span
+                className="text-neon-gold animate-neon-pulse"
+                style={{ animationDelay: "0.15s" }}
+              >
+                7
+              </span>
+              <span
+                className="text-neon-purple animate-neon-pulse"
+                style={{ animationDelay: "0.3s" }}
+              >
+                7
+              </span>
+            </div>
+            <p className="mt-2 font-black uppercase tracking-[0.3em] text-neon-gold text-xl md:text-2xl animate-flicker">
+              ДЖЕКПОТ!
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Bulb frame */}
       <Bulbs count={10} className="absolute top-2 left-4 right-4" />
       <Bulbs count={10} className="absolute bottom-2 left-4 right-4" />
@@ -128,7 +199,7 @@ function SlotCard({ employee, rank }: { employee: Employee; rank: number }) {
       {/* Slot machine top */}
       <div className="mb-4 flex items-center justify-between text-xs font-bold uppercase tracking-widest text-muted-foreground">
         <span>#{rank.toString().padStart(2, "0")}</span>
-        <span className="text-neon-red">● JACKPOT</span>
+        <span className="text-neon-red">● ДЖЕКПОТ</span>
       </div>
 
       {/* Avatar */}
@@ -138,31 +209,59 @@ function SlotCard({ employee, rank }: { employee: Employee; rank: number }) {
 
       <h3 className="mb-3 text-lg font-bold text-foreground">{employee.name}</h3>
 
-      {/* Triple-7 reel display */}
-      <div className="mb-3 grid grid-cols-3 gap-1.5 rounded-md border border-border bg-background/80 p-2">
-        {reels.map((r, i) => (
-          <div
-            key={i}
-            className="flex h-10 items-center justify-center rounded bg-card font-serif text-2xl font-black text-neon-red"
-          >
-            {r}
-          </div>
-        ))}
-      </div>
-
-      {/* Revenue display */}
+      {/* Revenue reel display */}
       <div className="rounded-lg border border-border bg-background/60 px-3 py-3">
-        <p className="mb-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-          Revenue Generated
+        <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+          Выручка
         </p>
-        <p
+        <div className="flex items-center justify-center gap-1">
+          <span
+            className={[
+              "font-mono text-2xl font-black",
+              revealed ? (isTop ? "text-neon-gold" : "text-foreground") : "text-muted-foreground",
+            ].join(" ")}
+          >
+            ₽
+          </span>
+          {reelChars.map((c, i) => (
+            <span
+              key={i}
+              className={[
+                "flex h-9 w-6 items-center justify-center rounded bg-card font-mono text-xl font-black tabular-nums",
+                spinning
+                  ? "text-neon-red"
+                  : revealed
+                    ? isTop
+                      ? "text-neon-gold"
+                      : "text-foreground"
+                    : "text-muted-foreground",
+              ].join(" ")}
+            >
+              {c}
+            </span>
+          ))}
+        </div>
+        <button
+          type="button"
+          onClick={handleSpin}
+          disabled={spinning || revealed || jackpot}
           className={[
-            "font-mono text-2xl font-black tabular-nums",
-            isTop ? "text-neon-gold" : "text-foreground",
+            "mt-3 w-full rounded-full px-4 py-2 text-xs font-black uppercase tracking-wider transition-transform",
+            revealed
+              ? "border border-border bg-transparent text-muted-foreground"
+              : spinning || jackpot
+                ? "bg-gradient-gold text-primary-foreground opacity-80"
+                : "bg-gradient-gold text-primary-foreground shadow-neon-gold hover:scale-105",
           ].join(" ")}
         >
-          {formatMoney(employee.revenue)}
-        </p>
+          {revealed
+            ? "Джекпот открыт"
+            : jackpot
+              ? "ДЖЕКПОТ!"
+              : spinning
+                ? "Крутим..."
+                : "Узнать сумму"}
+        </button>
       </div>
 
       {/* Suit row */}
@@ -249,12 +348,12 @@ function Index() {
         <div className="flex w-max gap-12 whitespace-nowrap animate-ticker text-xs font-bold uppercase tracking-[0.35em] text-neon-gold">
           {Array.from({ length: 2 }).map((_, k) => (
             <div key={k} className="flex gap-12">
-              <span>★ Jackpot Hits ★</span>
-              <span>♠ Big Wins ♠</span>
-              <span>♦ 24/7 Open ♦</span>
-              <span>♥ House Always Pays ♥</span>
-              <span>♣ Lucky 7s ♣</span>
-              <span>★ High Rollers Only ★</span>
+              <span>★ Срываем джекпоты ★</span>
+              <span>♠ Крупные выигрыши ♠</span>
+              <span>♦ Открыто 24/7 ♦</span>
+              <span>♥ Казино всегда платит ♥</span>
+              <span>♣ Счастливые семёрки ♣</span>
+              <span>★ Только хайроллеры ★</span>
             </div>
           ))}
         </div>
@@ -286,7 +385,7 @@ function Index() {
           </div>
 
           <h1 className="font-serif text-6xl font-black leading-none text-neon-gold animate-neon-pulse md:text-8xl">
-            Champions Casino
+            Казино Чемпионов
           </h1>
 
           {/* Bulb underline */}
@@ -295,14 +394,14 @@ function Index() {
           </div>
 
           <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground md:text-xl">
-            Who hit the biggest jackpot for the company?
+            Кто сорвал самый большой джекпот для компании?
           </p>
 
           <a
             href="#leaderboard"
             className="mt-10 inline-flex items-center justify-center rounded-full bg-gradient-gold px-10 py-4 text-base font-black uppercase tracking-wider text-primary-foreground shadow-neon-gold transition-transform hover:scale-105"
           >
-            View Leaderboard
+            Открыть рейтинг
           </a>
 
           {/* Jackpot stats strip */}
@@ -346,10 +445,10 @@ function Index() {
               ♠ ♥ ♦ ♣
             </p>
             <h2 className="text-4xl font-black md:text-5xl">
-              The <span className="text-neon-red">High Rollers</span>
+              Наши <span className="text-neon-red">Хайроллеры</span>
             </h2>
             <p className="mt-3 text-muted-foreground">
-              Every employee is a slot machine. Every spin is revenue on the board.
+              Каждый сотрудник — игровой автомат. Каждый спин — выручка на табло.
             </p>
           </div>
 
@@ -370,10 +469,10 @@ function Index() {
         <div className="mx-auto max-w-5xl">
           <div className="mb-14 text-center">
             <p className="mb-3 text-xs font-bold uppercase tracking-[0.4em] text-neon-red">
-              ★ ★ ★ Hall of Fame ★ ★ ★
+              ★ ★ ★ Зал славы ★ ★ ★
             </p>
             <h2 className="text-4xl font-black md:text-5xl">
-              Top <span className="text-neon-gold">Winners</span>
+              Лучшие <span className="text-neon-gold">Победители</span>
             </h2>
             <p className="mt-3 text-muted-foreground">The three biggest jackpots of the period.</p>
           </div>
@@ -412,7 +511,7 @@ function Index() {
             </span>
           </div>
           <h2 className="text-4xl font-black leading-tight text-neon-purple md:text-5xl">
-            Keep Spinning the Wheels of Success
+            Крутите барабаны успеха дальше
           </h2>
           <p className="mt-6 text-lg text-muted-foreground">
             Every deal closed lights up the floor. Every quarter, new jackpots. Here's to the team
@@ -423,12 +522,12 @@ function Index() {
             onClick={() => typeof window !== "undefined" && window.location.reload()}
             className="mt-10 inline-flex items-center justify-center rounded-full border-2 border-gold bg-transparent px-10 py-4 text-base font-black uppercase tracking-wider text-neon-gold transition-colors hover:bg-gradient-gold hover:text-primary-foreground"
           >
-            Refresh Results
+            Обновить результаты
           </button>
         </div>
 
         <p className="relative mt-16 text-xs uppercase tracking-[0.3em] text-muted-foreground">
-          © Champions Casino — House Always Wins
+          © Казино Чемпионов — Казино всегда выигрывает
         </p>
       </section>
     </main>
