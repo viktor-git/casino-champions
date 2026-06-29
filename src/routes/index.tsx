@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 
@@ -41,6 +40,7 @@ function parseCsv(text: string): Employee[] {
     .map((row) => {
       const [name, revenueRaw, initialsRaw] = row.split(",");
       const revenue = Number(revenueRaw?.trim().replace(/[^0-9]/g, ""));
+
       if (!name?.trim() || !revenue) return null;
       return {
         name: name.trim(),
@@ -126,13 +126,20 @@ function SlotCard({ employee, rank }: { employee: Employee; rank: number }) {
   const handleSpin = () => {
     if (spinning || revealed || jackpot) return;
     setSpinning(true);
+
+    const locked = finalDigits.map(() => false);
     intervalRef.current = setInterval(() => {
-      setDisplay(finalDigits.map(() => String(Math.floor(Math.random() * 10))));
+      setDisplay(
+        finalDigits.map((digit, i) =>
+          locked[i] ? digit : String(Math.floor(Math.random() * 10)),
+        ),
+      );
     }, 70);
 
     finalDigits.forEach((digit, i) => {
       window.setTimeout(
         () => {
+          locked[i] = true;
           setDisplay((prev) => {
             const next = [...prev];
             next[i] = digit;
