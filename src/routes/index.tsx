@@ -132,9 +132,7 @@ function SlotCard({ employee, rank }: { employee: Employee; rank: number }) {
     const locked = finalDigits.map(() => false);
     intervalRef.current = setInterval(() => {
       setDisplay(
-        finalDigits.map((digit, i) =>
-          locked[i] ? digit : String(Math.floor(Math.random() * 10)),
-        ),
+        finalDigits.map((digit, i) => (locked[i] ? digit : String(Math.floor(Math.random() * 10)))),
       );
     }, 70);
 
@@ -216,6 +214,7 @@ function SlotCard({ employee, rank }: { employee: Employee; rank: number }) {
         <img
           src={employee.avatar}
           alt={employee.name}
+          referrerPolicy="no-referrer"
           className="mx-auto mb-4 h-20 w-20 rounded-full object-cover shadow-neon-gold"
         />
       ) : (
