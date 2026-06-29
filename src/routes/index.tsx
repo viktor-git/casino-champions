@@ -27,6 +27,7 @@ type Employee = {
   name: string;
   revenue: number;
   initials: string;
+  avatar: string;
 };
 
 function parseInitials(name: string): string {
@@ -38,7 +39,7 @@ function parseCsv(text: string): Employee[] {
   const [, ...rows] = text.trim().split("\n");
   return rows
     .map((row) => {
-      const [name, revenueRaw, initialsRaw] = row.split(",");
+      const [name, revenueRaw, initialsRaw, avatarRaw] = row.split(",");
       const revenue = Number(revenueRaw?.trim().replace(/[^0-9]/g, ""));
 
       if (!name?.trim() || !revenue) return null;
@@ -46,6 +47,7 @@ function parseCsv(text: string): Employee[] {
         name: name.trim(),
         revenue,
         initials: initialsRaw?.trim() || parseInitials(name),
+        avatar: avatarRaw?.trim() || "",
       };
     })
     .filter(Boolean) as Employee[];
@@ -210,9 +212,17 @@ function SlotCard({ employee, rank }: { employee: Employee; rank: number }) {
       </div>
 
       {/* Avatar */}
-      <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-gold text-2xl font-black text-primary-foreground shadow-neon-gold">
-        {employee.initials}
-      </div>
+      {employee.avatar ? (
+        <img
+          src={employee.avatar}
+          alt={employee.name}
+          className="mx-auto mb-4 h-20 w-20 rounded-full object-cover shadow-neon-gold"
+        />
+      ) : (
+        <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-gold text-2xl font-black text-primary-foreground shadow-neon-gold">
+          {employee.initials}
+        </div>
+      )}
 
       <h3 className="mb-3 text-lg font-bold text-foreground">{employee.name}</h3>
 
