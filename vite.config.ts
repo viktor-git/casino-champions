@@ -6,13 +6,29 @@
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
-export default defineConfig({
-  tanstackStart: {
-    server: { entry: "server" },
-    spa: {
-      enabled: true,
-      prerender: { outputPath: "/index.html" },
-    },
-  },
-  nitro: false,
-});
+// Целевая площадка сборки выбирается через env BUILD_TARGET:
+//   BUILD_TARGET=vercel — SSR-сборка под Vercel (nitro preset "vercel")
+//   иначе               — статичный SPA-билд (nitro отключён, prerender index.html)
+const isVercel = process.env.BUILD_TARGET === "vercel";
+
+export default defineConfig(
+  isVercel
+    ? {
+        tanstackStart: {
+          server: { entry: "server" },
+        },
+        nitro: {
+          preset: "vercel",
+        },
+      }
+    : {
+        tanstackStart: {
+          server: { entry: "server" },
+          spa: {
+            enabled: true,
+            prerender: { outputPath: "/index.html" },
+          },
+        },
+        nitro: false,
+      },
+);
